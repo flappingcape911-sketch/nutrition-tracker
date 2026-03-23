@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nutrition Tracker</title>
+  <meta name="theme-color" content="#b45d2f">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Nutrition Tracker">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/icon-192.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icons/icon-192.svg">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="page-shell">
+    <header class="hero">
+      <div class="hero-copy">
+        <p class="eyebrow">Daily Nutrition Dashboard</p>
+        <h1>Track every meal, every day, with macros and micronutrients.</h1>
+        <p class="hero-text">
+          Build a daily log, break each meal into nutrients, and spot where your diet is strong or missing support.
+        </p>
+      </div>
+      <div class="hero-panel">
+        <div class="date-panel">
+          <label for="log-date">Log date</label>
+          <input id="log-date" type="date">
+        </div>
+        <p class="panel-note">
+          Run the local server with MySQL configured to keep your meal history saved on this laptop even after the browser closes.
+        </p>
+        <p id="storage-status" class="helper-text">Meal logs are syncing to your laptop database when the local server is configured.</p>
+        <button type="button" id="install-app-btn" class="button ghost">Install app</button>
+        <p id="install-status" class="helper-text">Install this tracker from your browser to use it like an app on Android or desktop.</p>
+      </div>
+    </header>
+
+    <main class="dashboard-grid">
+      <section class="card summary-card" aria-labelledby="daily-summary-title">
+        <div class="section-heading">
+          <div>
+            <p class="section-kicker">Overview</p>
+            <h2 id="daily-summary-title">Daily snapshot</h2>
+          </div>
+          <p class="summary-caption">Macro totals and nutrient coverage for the selected day.</p>
+        </div>
+        <div class="stats-grid" id="stats-grid"></div>
+        <div class="macro-breakdown">
+          <div class="macro-chart">
+            <div class="macro-bar">
+              <span id="macro-protein-bar" class="macro-segment protein"></span>
+              <span id="macro-carbs-bar" class="macro-segment carbs"></span>
+              <span id="macro-fat-bar" class="macro-segment fat"></span>
+            </div>
+            <div class="macro-legend" id="macro-legend"></div>
+          </div>
+          <div class="insight-box">
+            <h3>Daily analysis</h3>
+            <p id="daily-analysis-copy"></p>
+          </div>
+        </div>
+      </section>
+
+      <section class="card profile-card" aria-labelledby="profile-settings-title">
+        <div class="section-heading">
+          <div>
+            <p class="section-kicker">Profile</p>
+            <h2 id="profile-settings-title">Your targets</h2>
+          </div>
+          <p class="summary-caption">Personal details and AI instructions used to tailor your daily feedback.</p>
+        </div>
+
+        <form id="profile-form" class="custom-food-form">
+          <div class="field-row two-up">
+            <label>
+              Age
+              <input id="profile-age" type="number" min="1" max="120" placeholder="28">
+            </label>
+            <label>
+              Weight (kg)
+              <input id="profile-weight" type="number" min="1" step="0.1" placeholder="72">
+            </label>
+          </div>
+
+          <div class="field-row two-up">
+            <label>
+              Height (cm)
+              <input id="profile-height" type="number" min="50" step="0.1" placeholder="175">
+            </label>
+            <label>
+              Daily calorie goal
+              <input id="profile-calorie-goal" type="number" min="0" step="1" placeholder="2200">
+            </label>
+          </div>
+
+          <div class="field-row two-up">
+            <label>
+              Daily protein goal (g)
+              <input id="profile-protein-goal" type="number" min="0" step="1" placeholder="140">
+            </label>
+            <label>
+              Daily carbs goal (g)
+              <input id="profile-carb-goal" type="number" min="0" step="1" placeholder="220">
+            </label>
+          </div>
+
+          <div class="field-row two-up">
+            <label>
+              Daily fat goal (g)
+              <input id="profile-fat-goal" type="number" min="0" step="1" placeholder="70">
+            </label>
+            <label>
+              Daily fiber goal (g)
+              <input id="profile-fiber-goal" type="number" min="0" step="1" placeholder="30">
+            </label>
+          </div>
+
+          <label>
+            AI instructions
+            <textarea id="profile-ai-instructions" rows="4" placeholder="Example: I am cutting fat, prefer high-protein meals, and usually eat Indian home food. When unsure, assume moderate oil unless I say otherwise."></textarea>
+          </label>
+
+          <div class="inline-custom-header">
+            <button type="submit" class="button secondary">Save profile settings</button>
+            <p id="profile-status" class="helper-text">Your goals and AI preferences are stored on this device.</p>
+          </div>
+        </form>
+      </section>
+
+      <section class="card micros-card" aria-labelledby="micros-title">
+        <div class="section-heading">
+          <div>
+            <p class="section-kicker">Coverage</p>
+            <h2 id="micros-title">Micronutrient progress</h2>
+          </div>
+          <p class="summary-caption">Reference percentages use general adult daily values.</p>
+        </div>
+        <div id="micros-grid" class="micros-grid"></div>
+      </section>
+
+      <section class="card composer-card" aria-labelledby="meal-builder-title">
+        <div class="section-heading">
+          <div>
+            <p class="section-kicker">Compose</p>
+            <h2 id="meal-builder-title">Build a meal</h2>
+          </div>
+          <p class="summary-caption">Add foods from the library or create your own food entry.</p>
+        </div>
+
+        <form id="meal-form" class="meal-form">
+          <div class="field-row two-up">
+            <label>
+              Meal name
+              <input id="meal-name" type="text" placeholder="Breakfast, lunch, snack..." maxlength="40">
+            </label>
+            <label>
+              Time
+              <input id="meal-time" type="time">
+            </label>
+          </div>
+
+          <div class="ai-builder">
+            <div class="inline-custom-header">
+              <div>
+                <h3>Describe your meal</h3>
+                <p class="summary-caption">Example: 2 rotis, 1 bowl dal tadka, 150 g paneer curry, salad, and a small cup of curd.</p>
+              </div>
+              <button type="button" id="analyze-ai-btn" class="button primary">Analyze with AI</button>
+            </div>
+            <label>
+              Meal description
+              <textarea id="meal-description" rows="4" placeholder="Write the meal in plain language and include approximate portions if you know them."></textarea>
+            </label>
+            <p id="ai-status" class="helper-text">AI analysis uses a Gemini API key on the local server.</p>
+          </div>
+
+          <div class="field-row food-adder">
+            <label>
+              Food
+              <select id="food-select"></select>
+            </label>
+            <label>
+              Servings
+              <input id="servings-input" type="number" min="0.25" step="0.25" value="1">
+            </label>
+            <button type="button" id="add-food-btn" class="button secondary">Add food</button>
+            <button type="button" id="toggle-customize-btn" class="button ghost">Customize</button>
+          </div>
+
+          <div id="inline-custom-builder" class="inline-custom-builder hidden" aria-hidden="true">
+            <div class="inline-custom-header">
+              <div>
+                <h3>Add your own food</h3>
+                <p class="summary-caption">Create a custom food here, then add it straight into this meal.</p>
+              </div>
+              <button type="button" id="close-customize-btn" class="button ghost">Close</button>
+            </div>
+
+            <div id="inline-custom-food-form" class="custom-food-form">
+              <div class="field-row two-up">
+                <label>
+                  Food name
+                  <input id="inline-custom-name" type="text" maxlength="50" placeholder="Homemade paneer wrap">
+                </label>
+                <label>
+                  Serving label
+                  <input id="inline-custom-serving" type="text" maxlength="40" placeholder="1 wrap, 150 g, 1 bowl...">
+                </label>
+              </div>
+
+              <div class="field-row nutrient-grid">
+                <label>Calories<input id="inline-custom-calories" type="number" min="0" step="1"></label>
+                <label>Protein (g)<input id="inline-custom-protein" type="number" min="0" step="0.1"></label>
+                <label>Carbs (g)<input id="inline-custom-carbs" type="number" min="0" step="0.1"></label>
+                <label>Fat (g)<input id="inline-custom-fat" type="number" min="0" step="0.1"></label>
+                <label>Fiber (g)<input id="inline-custom-fiber" type="number" min="0" step="0.1" value="0"></label>
+                <label>Calcium (mg)<input id="inline-custom-calcium" type="number" min="0" step="1" value="0"></label>
+                <label>Iron (mg)<input id="inline-custom-iron" type="number" min="0" step="0.1" value="0"></label>
+                <label>Potassium (mg)<input id="inline-custom-potassium" type="number" min="0" step="1" value="0"></label>
+                <label>Sodium (mg)<input id="inline-custom-sodium" type="number" min="0" step="1" value="0"></label>
+                <label>Vitamin C (mg)<input id="inline-custom-vitamin-c" type="number" min="0" step="0.1" value="0"></label>
+                <label>Vitamin A (mcg)<input id="inline-custom-vitamin-a" type="number" min="0" step="1" value="0"></label>
+              </div>
+
+              <button type="button" id="save-inline-custom-food-btn" class="button secondary">Save and use in this meal</button>
+            </div>
+          </div>
+
+          <label>
+            Notes
+            <textarea id="meal-notes" rows="3" placeholder="How you felt, ingredients, portion notes, prep style..."></textarea>
+          </label>
+
+          <div class="current-meal">
+            <div class="current-meal-header">
+              <h3>Meal items</h3>
+              <p id="current-meal-caption">No foods added yet.</p>
+            </div>
+            <div id="current-meal-items" class="pill-list empty-state">
+              Add foods to start building this meal.
+            </div>
+          </div>
+
+          <div class="composer-footer">
+            <div class="meal-preview" id="meal-preview"></div>
+            <button type="submit" class="button primary">Save meal to daily log</button>
+          </div>
+        </form>
+      </section>
+
+      <section class="card food-library-card" aria-labelledby="food-library-title">
+        <div class="section-heading">
+          <div>
+            <p class="section-kicker">Library</p>
+            <h2 id="food-library-title">Custom foods</h2>
+          </div>
+          <p class="summary-caption">Add foods you eat often so future logs are faster.</p>
+        </div>
+
+        <form id="custom-food-form" class="custom-food-form">
+          <div class="field-row two-up">
+            <label>
+              Food name
+              <input id="custom-name" type="text" maxlength="50" placeholder="Homemade paneer wrap" required>
+            </label>
+            <label>
+              Serving label
+              <input id="custom-serving" type="text" maxlength="40" placeholder="1 wrap, 150 g, 1 bowl..." required>
+            </label>
+          </div>
+
+          <div class="field-row nutrient-grid">
+            <label>Calories<input id="custom-calories" type="number" min="0" step="1" required></label>
+            <label>Protein (g)<input id="custom-protein" type="number" min="0" step="0.1" required></label>
+            <label>Carbs (g)<input id="custom-carbs" type="number" min="0" step="0.1" required></label>
+            <label>Fat (g)<input id="custom-fat" type="number" min="0" step="0.1" required></label>
+            <label>Fiber (g)<input id="custom-fiber" type="number" min="0" step="0.1" value="0"></label>
+            <label>Calcium (mg)<input id="custom-calcium" type="number" min="0" step="1" value="0"></label>
+            <label>Iron (mg)<input id="custom-iron" type="number" min="0" step="0.1" value="0"></label>
+            <label>Potassium (mg)<input id="custom-potassium" type="number" min="0" step="1" value="0"></label>
+            <label>Sodium (mg)<input id="custom-sodium" type="number" min="0" step="1" value="0"></label>
+            <label>Vitamin C (mg)<input id="custom-vitamin-c" type="number" min="0" step="0.1" value="0"></label>
+            <label>Vitamin A (mcg)<input id="custom-vitamin-a" type="number" min="0" step="1" value="0"></label>
+          </div>
+
+          <button type="submit" class="button secondary">Save custom food</button>
+        </form>
+
+        <div class="custom-foods">
+          <h3>Your saved foods</h3>
+          <div id="custom-food-list" class="custom-food-list empty-state">No custom foods yet.</div>
+        </div>
+      </section>
+
+      <section class="card meals-card" aria-labelledby="meals-log-title">
+        <div class="section-heading">
+          <div>
+            <p class="section-kicker">History</p>
+            <h2 id="meals-log-title">Meals for this day</h2>
+          </div>
+          <p class="summary-caption">Each meal includes its own nutrient analysis and quick highlights.</p>
+        </div>
+        <div id="meals-log" class="meals-log empty-state">No meals logged for this day yet.</div>
+      </section>
+    </main>
+  </div>
+
+  <template id="meal-card-template">
+    <article class="meal-card">
+      <div class="meal-card-header">
+        <div>
+          <p class="meal-time"></p>
+          <h3 class="meal-title"></h3>
+        </div>
+        <button class="button ghost delete-meal-btn" type="button">Delete</button>
+      </div>
+      <div class="meal-chip-row"></div>
+      <p class="meal-notes"></p>
+      <div class="meal-analysis-grid"></div>
+      <div class="meal-highlights"></div>
+    </article>
+  </template>
+
+  <script src="app.js"></script>
+</body>
+</html>

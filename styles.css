@@ -1,0 +1,541 @@
+:root {
+  --bg: #f4efe6;
+  --surface: rgba(255, 251, 244, 0.86);
+  --surface-strong: #fff8ee;
+  --line: rgba(95, 78, 57, 0.14);
+  --text: #2f2418;
+  --muted: #675847;
+  --accent: #b45d2f;
+  --accent-deep: #7e3916;
+  --olive: #7f8b3d;
+  --green: #3f7a5a;
+  --gold: #dfad49;
+  --danger: #a74731;
+  --shadow: 0 18px 48px rgba(64, 40, 19, 0.12);
+  --radius-xl: 28px;
+  --radius-lg: 20px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: "Aptos", "Trebuchet MS", "Segoe UI", sans-serif;
+  color: var(--text);
+  background:
+    radial-gradient(circle at top left, rgba(223, 173, 73, 0.34), transparent 30%),
+    radial-gradient(circle at top right, rgba(127, 139, 61, 0.26), transparent 22%),
+    linear-gradient(180deg, #f6f0e5 0%, #f0e6d5 40%, #efe8de 100%);
+}
+
+h1,
+h2,
+h3 {
+  margin: 0;
+  font-family: Georgia, "Times New Roman", serif;
+  line-height: 1.1;
+}
+
+p {
+  margin: 0;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+.page-shell {
+  width: min(1240px, calc(100% - 32px));
+  margin: 0 auto;
+  padding: 32px 0 48px;
+}
+
+.hero {
+  display: grid;
+  grid-template-columns: 1.6fr 0.9fr;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+.hero-copy,
+.hero-panel,
+.card {
+  background: var(--surface);
+  backdrop-filter: blur(14px);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow);
+}
+
+.hero-copy {
+  border-radius: var(--radius-xl);
+  padding: 38px;
+}
+
+.hero-copy h1 {
+  font-size: clamp(2.3rem, 5vw, 4.2rem);
+  max-width: 11ch;
+}
+
+.eyebrow,
+.section-kicker,
+.meal-time {
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.hero-text,
+.summary-caption,
+.panel-note,
+.meal-notes,
+.custom-food-meta,
+.insight-box p {
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.hero-text {
+  margin-top: 14px;
+  font-size: 1.05rem;
+  max-width: 54ch;
+}
+
+.hero-panel {
+  border-radius: var(--radius-xl);
+  padding: 28px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.date-panel {
+  display: grid;
+  gap: 8px;
+}
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  gap: 24px;
+}
+
+.card {
+  border-radius: var(--radius-xl);
+  padding: 26px;
+}
+
+.summary-card,
+.meals-card {
+  grid-column: 1 / -1;
+}
+
+.section-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 20px;
+  margin-bottom: 22px;
+}
+
+.section-heading h2 {
+  font-size: 2rem;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 14px;
+  margin-bottom: 22px;
+}
+
+.stat-tile,
+.micro-card,
+.meal-preview-card,
+.analysis-pill,
+.custom-food-item {
+  background: var(--surface-strong);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+}
+
+.stat-tile {
+  padding: 18px;
+}
+
+.stat-tile .label {
+  display: block;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+
+.stat-tile .value {
+  font-size: 1.8rem;
+  font-weight: 700;
+}
+
+.stat-tile .subvalue {
+  margin-top: 6px;
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+
+.macro-breakdown {
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  gap: 16px;
+}
+
+.macro-chart,
+.insight-box {
+  background: var(--surface-strong);
+  border-radius: var(--radius-lg);
+  padding: 18px;
+  border: 1px solid var(--line);
+}
+
+.macro-bar {
+  display: flex;
+  overflow: hidden;
+  border-radius: 999px;
+  height: 16px;
+  background: #e8dccb;
+  margin-bottom: 16px;
+}
+
+.macro-segment {
+  display: block;
+  height: 100%;
+}
+
+.macro-segment.protein { background: var(--green); }
+.macro-segment.carbs { background: var(--gold); }
+.macro-segment.fat { background: var(--accent); }
+
+.macro-legend {
+  display: grid;
+  gap: 8px;
+}
+
+.macro-legend-item {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  color: var(--muted);
+}
+
+.macro-legend-item strong {
+  color: var(--text);
+}
+
+.micros-grid {
+  display: grid;
+  gap: 14px;
+}
+
+.micro-card {
+  padding: 16px 18px;
+}
+
+.micro-card-header,
+.micro-card-footer,
+.meal-card-header,
+.current-meal-header,
+.custom-food-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.micro-bar {
+  margin: 12px 0 10px;
+  width: 100%;
+  height: 12px;
+  border-radius: 999px;
+  background: #ecdfcf;
+  overflow: hidden;
+}
+
+.micro-fill {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, var(--olive), var(--green));
+}
+
+.micro-fill.warn {
+  background: linear-gradient(90deg, #d99344, #b45d2f);
+}
+
+.micro-fill.limit {
+  background: linear-gradient(90deg, #c66b4c, #9e392c);
+}
+
+.meal-form,
+.custom-food-form {
+  display: grid;
+  gap: 18px;
+}
+
+.ai-builder {
+  display: grid;
+  gap: 14px;
+  padding: 18px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: rgba(255, 248, 238, 0.72);
+}
+
+.helper-text {
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+
+.helper-text.error {
+  color: var(--danger);
+}
+
+.helper-text.success {
+  color: var(--green);
+}
+
+.field-row {
+  display: grid;
+  gap: 14px;
+}
+
+.field-row.two-up {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.food-adder {
+  grid-template-columns: 1.6fr 0.6fr auto auto;
+  align-items: end;
+}
+
+.inline-custom-builder {
+  display: grid;
+  gap: 18px;
+  padding: 18px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: rgba(255, 248, 238, 0.8);
+}
+
+.inline-custom-builder.hidden {
+  display: none;
+}
+
+.inline-custom-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.nutrient-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+label {
+  display: grid;
+  gap: 8px;
+  font-weight: 600;
+}
+
+input,
+select,
+textarea {
+  width: 100%;
+  border-radius: 14px;
+  border: 1px solid rgba(94, 69, 39, 0.16);
+  background: rgba(255, 251, 244, 0.95);
+  padding: 13px 14px;
+  color: var(--text);
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  outline: 2px solid rgba(180, 93, 47, 0.22);
+  border-color: rgba(180, 93, 47, 0.45);
+}
+
+textarea {
+  resize: vertical;
+}
+
+.button {
+  border: 0;
+  border-radius: 999px;
+  padding: 14px 18px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 160ms ease, background-color 160ms ease;
+}
+
+.button:hover {
+  transform: translateY(-1px);
+}
+
+.button.primary {
+  background: var(--accent);
+  color: #fff8f1;
+}
+
+.button.secondary {
+  background: var(--olive);
+  color: #fffdf6;
+}
+
+.button.ghost {
+  background: rgba(180, 93, 47, 0.1);
+  color: var(--accent-deep);
+  padding: 10px 14px;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.current-meal,
+.custom-foods {
+  display: grid;
+  gap: 12px;
+}
+
+.pill-list,
+.meal-chip-row,
+.meal-highlights {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.food-pill,
+.analysis-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+}
+
+.food-pill button {
+  border: 0;
+  background: none;
+  color: var(--danger);
+  cursor: pointer;
+  font-weight: 700;
+  padding: 0;
+}
+
+.empty-state {
+  border: 1px dashed rgba(95, 78, 57, 0.24);
+  border-radius: var(--radius-lg);
+  padding: 18px;
+  color: var(--muted);
+  background: rgba(255, 248, 238, 0.55);
+}
+
+.composer-footer,
+.meal-preview,
+.custom-food-list,
+.meals-log,
+.meal-card {
+  display: grid;
+  gap: 16px;
+}
+
+.meal-preview-card,
+.custom-food-item,
+.meal-card {
+  padding: 16px;
+}
+
+.meal-preview-metrics,
+.meal-analysis-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.analysis-pill {
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.analysis-pill strong {
+  font-size: 1.15rem;
+}
+
+.custom-food-copy {
+  display: grid;
+  gap: 4px;
+}
+
+.chip {
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: rgba(127, 139, 61, 0.12);
+}
+
+.chip.warn {
+  background: rgba(180, 93, 47, 0.14);
+}
+
+@media (max-width: 1080px) {
+  .hero,
+  .dashboard-grid,
+  .macro-breakdown {
+    grid-template-columns: 1fr;
+  }
+
+  .stats-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .nutrient-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 760px) {
+  .page-shell {
+    width: min(100% - 20px, 1240px);
+    padding-top: 20px;
+  }
+
+  .hero-copy,
+  .hero-panel,
+  .card {
+    padding: 20px;
+  }
+
+  .stats-grid,
+  .meal-preview-metrics,
+  .meal-analysis-grid,
+  .nutrient-grid,
+  .field-row.two-up,
+  .food-adder {
+    grid-template-columns: 1fr;
+  }
+
+  .section-heading,
+  .micro-card-header,
+  .micro-card-footer,
+  .meal-card-header,
+  .current-meal-header,
+  .custom-food-item,
+  .inline-custom-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
