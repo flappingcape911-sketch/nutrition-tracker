@@ -1,63 +1,110 @@
 # Nutrition Tracker
 
-A lightweight browser-based nutrition tracker for logging meals each day and reviewing macro + micronutrient intake.
+A Cloudflare-ready nutrition tracker that logs meals, analyzes macros and micronutrients with Gemini, and stores your meals, profile, and custom foods in Cloudflare D1 so you can use the same personal account on Android and desktop.
+
+## Stack
+
+- Static frontend: HTML, CSS, vanilla JavaScript
+- Cloud backend: Cloudflare Pages Functions
+- Cloud database: Cloudflare D1
+- AI analysis: Gemini API
+- Installable app: PWA with manifest + service worker
 
 ## Features
 
-- Log meals by date and time
-- Save your age, weight, height, and daily calorie/macro goals
-- Build meals from a built-in food library
-- Save custom foods with macro and micronutrient values
-- Get per-meal analysis for calories, macros, and key micronutrients
-- Describe a meal in plain language and let Gemini estimate calories plus macro and micronutrient totals using your saved profile and custom AI instructions
-- Review daily totals for calories, protein, carbs, fat, fiber, calcium, iron, potassium, sodium, vitamin C, and vitamin A
-- Meal logs can be saved into MySQL on your laptop through the local server
-- Browser `localStorage` is kept as a backup cache when MySQL is unavailable
-- Installable PWA experience for Android and desktop browsers
+- One private owner account with email + password login
+- One-time setup code for secure first account creation
+- Cloud-synced meals, profile goals, and custom foods
+- Analyze meals with Gemini using your profile and custom AI instructions
+- Track calories, calorie deficit, macros, and micronutrients
+- Install on Android or desktop as a web app
 
-## Run
+## Project Layout
 
-1. Copy `.env.example` to `.env`
-2. Fill in your MySQL and Gemini values once
-3. Make sure MySQL is running on your laptop
-4. Run `npm start`
-5. Open `http://localhost:3000`
-6. Install it from your browser using the in-app `Install app` button or the browser menu
+- `public/` -> static site files deployed to Cloudflare Pages
+- `functions/api/` -> Cloudflare Pages Functions
+- `schema.sql` -> D1 table schema
+- `wrangler.toml` -> Cloudflare config
+- `.dev.vars.example` -> local development secrets template
 
-Example PowerShell:
+## One-Time Setup
+
+1. Install dependencies:
 
 ```powershell
-Copy-Item .\.env.example .\.env
-# edit .env with your values
-npm start
+cmd /c npm install
 ```
 
-Example `.env`:
+2. Log in to Cloudflare:
 
-```dotenv
-MYSQL_HOST=127.0.0.1
-MYSQL_PORT=3306
-MYSQL_USER=root
-MYSQL_PASSWORD=your_mysql_password_here
-MYSQL_DATABASE=nutrition_tracker
-
-GEMINI_API_KEY=your_gemini_api_key_here
-GEMINI_MODEL=gemini-2.5-flash
-
-PORT=3000
+```powershell
+npx wrangler login
 ```
 
-Optional:
+3. Create a D1 database:
 
-- Set `GEMINI_MODEL` to choose a different model
-- Set `PORT` to change the local server port
-- You can use `GOOGLE_API_KEY` instead of `GEMINI_API_KEY`
+```powershell
+npx wrangler d1 create nutrition-tracker
+```
+
+4. Copy the returned `database_id` into `wrangler.toml`.
+
+5. Apply the schema to the remote D1 database:
+
+```powershell
+npx wrangler d1 execute nutrition-tracker --remote --file=schema.sql
+```
+
+6. Create local dev secrets:
+
+```powershell
+Copy-Item .\.dev.vars.example .\.dev.vars
+```
+
+Then edit `.dev.vars` and add your real values.
+
+7. Add production secrets to Cloudflare Pages:
+
+```powershell
+npx wrangler pages secret put GEMINI_API_KEY --project-name nutrition-tracker
+npx wrangler pages secret put ACCOUNT_SETUP_CODE --project-name nutrition-tracker
+```
+
+Optional model override:
+
+```powershell
+npx wrangler pages secret put GEMINI_MODEL --project-name nutrition-tracker
+```
+
+## Local Cloudflare Development
+
+Run the app locally with Cloudflare Pages + Functions + D1 emulation:
+
+```powershell
+npm run dev
+```
+
+Then open the local URL Wrangler prints.
+
+## Deploy To Free Cloudflare Pages Domain
+
+Deploy the app:
+
+```powershell
+npm run deploy
+```
+
+Cloudflare will deploy the site and give you a free `*.pages.dev` URL.
+
+After deployment:
+
+- open the `pages.dev` URL on Android in Chrome
+- create your owner account once using the setup code secret
+- sign in on any device to load the same meals, goals, and custom foods
+- tap `Install app` or use the browser menu to add it to your home screen
 
 ## Notes
 
-- Daily reference values are general-purpose defaults, not personalized medical targets.
-- Nutrient values in the starter food library are approximate.
-- AI meal estimates are best-effort approximations and depend on how clearly you describe portions and ingredients.
-- The server creates the `nutrition_tracker` database automatically if your MySQL user has permission.
-- Meals are stored in a MySQL table named `meals`.
-- `.env` is ignored by git so your keys and passwords stay local to your laptop.
+- `public/` is the deployable site root.
+- Existing legacy meals from the old single-user table are imported into the first account automatically.
+- Gemini secrets and the setup code should stay in Cloudflare secrets or `.dev.vars`, never in committed files.
