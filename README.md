@@ -1,6 +1,6 @@
 # Nutrition Tracker
 
-A Cloudflare-ready nutrition tracker that logs meals, analyzes macros and micronutrients with Gemini, and stores your meals, profile, and custom foods in Cloudflare D1 so you can use the same personal account on Android and desktop.
+A all in one personal nutrition tracker that logs meals, analyzes macros and micronutrients with Gemini, and stores your meals, profile, and custom foods in Cloudflare D1 so you can use the same personal account on Android and desktop.
 
 ## Stack
 
